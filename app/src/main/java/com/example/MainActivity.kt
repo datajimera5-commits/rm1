@@ -13,7 +13,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -22,6 +21,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.ui.screens.EditMatchScreen
 import com.example.ui.screens.HomeScreen
@@ -61,19 +63,32 @@ fun ScoreboardApp(viewModel: ScoreboardViewModel) {
         null
     }
 
-    // Auto rotate screen: Landscape for Scoreboard, Portrait for Home & Edit
+    // Auto rotate screen & Immersive Fullscreen Mode
     DisposableEffect(currentScreen) {
         activity?.let { act ->
+            val window = act.window
+            val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+
             if (currentScreen == AppScreen.SCOREBOARD) {
                 // Auto switch to landscape when match starts
                 act.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                // True full screen: hide status bar (battery, wifi, clock) and nav bars
+                insetsController.systemBarsBehavior =
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                insetsController.hide(WindowInsetsCompat.Type.systemBars())
             } else {
-                // Switch back to portrait on home and edit screens
+                // Switch back to portrait on home and edit screens and restore status bar
                 act.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                insetsController.show(WindowInsetsCompat.Type.systemBars())
             }
         }
         onDispose {
-            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            activity?.let { act ->
+                act.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                val window = act.window
+                val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+                insetsController.show(WindowInsetsCompat.Type.systemBars())
+            }
         }
     }
 
@@ -107,6 +122,7 @@ fun ScoreboardApp(viewModel: ScoreboardViewModel) {
                 }
 
                 AppScreen.SCOREBOARD -> {
+                    // True full bleed edge-to-edge without status bar or padding
                     ScoreboardScreen(
                         matchState = matchState,
                         lastTapFeedback = lastTapFeedback,
@@ -132,9 +148,7 @@ fun ScoreboardApp(viewModel: ScoreboardViewModel) {
                         },
                         onEditMatch = { viewModel.navigateTo(AppScreen.EDIT) },
                         onBackToHome = { viewModel.navigateTo(AppScreen.HOME) },
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .safeDrawingPadding()
+                        modifier = Modifier.fillMaxSize()
                     )
                 }
 

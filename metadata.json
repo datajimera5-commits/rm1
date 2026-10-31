@@ -2,5 +2,7 @@
   "name": "VS Scoreboard",
   "description": "Professional dual-team scoreboard with split screen, custom team colors and starting scores, tap-to-increment/decrement, and live match controls.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }
