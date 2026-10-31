@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">VS Scoreboard</string>
+    <string name="start_match">Start Match</string>
+    <string name="edit_match">Edit Teams &amp; Match</string>
+    <string name="team_1_default_name">Messi</string>
+    <string name="team_2_default_name">Ronaldo</string>
+    <string name="scoreboard_title">Live Scoreboard</string>
+    <string name="reset_score">Reset Score</string>
+    <string name="swap_teams">Swap Teams</string>
+    <string name="tap_hint_inc">Tap Bottom to +1</string>
+    <string name="tap_hint_dec">Tap Top to -1</string>
+</resources>
